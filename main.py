@@ -52,15 +52,23 @@ def calculate_balance():
     return total
 
 def get_transaction_from_user():
-    try:
-        amount = float(input("Ingresa el monto: "))
-    except ValueError:
-        print("Eso no es un numero valido.")
-        return
-    transaction_type = str(input("Ingresa el tipo de transaccion: "))
-    description = str(input("Ingrese una descripcion: "))
-    creation_date = str(input("Ingrese la fecha: "))
-    add_transaction_entry(amount, transaction_type, description, creation_date)
+    while True:
+        try:
+            amount = float(input("Ingresa el monto: "))
+            break
+        except ValueError:
+            print("Eso no es un numero valido.")
+            continue
+    while True:        
+        transaction_type = input("Ingresa el tipo de transaccion(ingreso/gasto): ").lower()
+        if transaction_type not in ["ingreso", "gasto"]:
+            print("Debe ser Ingreso o Gasto.")
+            continue
+
+        description = str(input("Ingrese una descripcion: "))
+        creation_date = str(input("Ingrese la fecha: "))
+        add_transaction_entry(amount, transaction_type, description, creation_date)
+        break
 
 def show_menu():
         while(True):
@@ -68,7 +76,11 @@ def show_menu():
             print("2. Ver transacciones")
             print("3. Ver Balance")
             print("4. Salir")
-            selected_option = int(input("Ingrese la opcion: "))
+            try:
+                selected_option = int(input("Ingrese la opcion: "))
+            except ValueError:
+                print("No es un caracter valido.")
+                continue       
             if selected_option == 1:
                 get_transaction_from_user()
             elif selected_option == 2:
@@ -79,6 +91,9 @@ def show_menu():
             elif selected_option == 4:
                 save_data(transactions)
                 break
+            else:
+                print("No es una opcion.")
+                continue
 
 #Inicio del programa
 transactions = load_data()
