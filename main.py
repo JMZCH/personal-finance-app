@@ -17,36 +17,28 @@ total_income = 0.0
 total_loss = 0.0
 balance = 0.0
 
-transactions = []
-
-def log_expense(amount, transaction_type, description, creation_date):
+def add_transaction_entry(amount, transaction_type, description, creation_date):
     is_valid = validate_amount(amount)
-    
     if not is_valid:
         print("El monto no puede ser cero.")
         return
-    
-    if amount > 0:
-        print("El monto debe ser menor a cero.")
+    if amount < 0:
+        print("El monto debe ser mayor a cero.")
         return
-    
-    expense = {
-        "amount": amount, 
-        "description": description, 
-        "type": transaction_type,
-        "date": creation_date
-        }
-    transactions.append(expense)
-    print("Gasto registrado:", expense)
-    return expense
-
-def add_transaction(amount, transaction_type, description, creation_date):
-    transactions.append({
-        "amount": amount, 
-        "description": description, 
-        "type": transaction_type,
-        "date": creation_date
-        })
+    if transaction_type == "gasto":
+        amount = -amount
+    transaction = {
+            "amount": amount, 
+            "description": description, 
+            "type": transaction_type,
+            "date": creation_date
+            }
+    transactions.append(transaction)
+    if transaction_type == "ingreso":
+        print("Ingreso registrado:", transaction)
+    if transaction_type == "gasto":
+        print("Gasto registrado:", transaction)
+    return transaction
 
 def show_transactions():
     for transaction in transactions:
@@ -59,8 +51,7 @@ def calculate_balance():
         total = total + transaction["amount"]
     return total
 
-
-def get_expense_from_user():
+def get_transaction_from_user():
     try:
         amount = float(input("Ingresa el monto: "))
     except ValueError:
@@ -69,61 +60,25 @@ def get_expense_from_user():
     transaction_type = str(input("Ingresa el tipo de transaccion: "))
     description = str(input("Ingrese una descripcion: "))
     creation_date = str(input("Ingrese la fecha: "))
-    amount = -amount
-    log_expense(amount, transaction_type, description, creation_date)
+    add_transaction_entry(amount, transaction_type, description, creation_date)
 
 def show_menu():
         while(True):
-            print("1. Agregar gasto")
-            print("2. Agregar ingreso")
-            print("3. Ver transacciones")
-            print("4. Ver Balance")
-            print("5. Salir")
+            print("1. Agregar transaccion")
+            print("2. Ver transacciones")
+            print("3. Ver Balance")
+            print("4. Salir")
             selected_option = int(input("Ingrese la opcion: "))
             if selected_option == 1:
-                get_expense_from_user()
+                get_transaction_from_user()
             elif selected_option == 2:
-                get_income_from_user()
-            elif selected_option == 3:
                 show_transactions()
-            elif selected_option == 4:
+            elif selected_option == 3:
                 balance = calculate_balance()
                 print("Balance actual:", balance, currency)
-            elif selected_option == 5:
+            elif selected_option == 4:
                 save_data(transactions)
                 break
-    
-def log_income(amount, transaction_type, description, creation_date):
-    is_valid = validate_amount(amount)
-    
-    if not is_valid:
-        print("El monto no puede ser cero.")
-        return
-    
-    if amount < 0:
-        print("El monto debe ser mayor a cero.")
-        return
-    
-    income = {
-        "amount": amount, 
-        "description": description, 
-        "type": transaction_type,
-        "date": creation_date
-        }
-    transactions.append(income)
-    print("Ingreso registrado:", income)
-    return income
-
-def get_income_from_user():
-    try:
-        amount = float(input("Ingresa el monto: "))
-    except ValueError:
-        print("Eso no es un numero valido.")
-        return
-    transaction_type = str(input("Ingresa el tipo de transaccion: "))
-    description = str(input("Ingrese una descripcion: "))
-    creation_date = str(input("Ingrese la fecha: "))
-    log_income(amount, transaction_type, description, creation_date)
 
 #Inicio del programa
 transactions = load_data()
